@@ -9,6 +9,8 @@ SQLAlchemy==1.4.32
 starlette==0.17.1
 segno==1.4.1
 uvicorn==0.17.5
+uvloop
+httptools
 aiofiles==0.8.0
 mysql-connector-python~=8.0.27
 mysql_connector_repackaged==0.3.1
