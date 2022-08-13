@@ -55,3 +55,9 @@ async def retry_pattern():
         raise HTTPException(status_code=400, detail="Item not found")
     else:
         return {"detail": "Item found"}
+
+
+@patternRouter.get("/help")
+async def help():
+    return {"detail": "Send help"}
+
