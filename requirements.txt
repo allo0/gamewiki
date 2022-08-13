@@ -4,7 +4,7 @@ fastapi_utils==0.2.1
 passlib==1.7.4
 pydantic==1.9.0
 SQLAlchemy==1.4.32
-starlette==0.17.1
+starlette==0.19.1
 uvicorn==0.18.2
 backoff==2.1.2
 uvloop
