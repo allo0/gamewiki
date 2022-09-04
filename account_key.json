@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "gamewiki-15b52",
+  "private_key_id": "88897285651b7de5f8dbdd28f5180d4a3bcbcbb0",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCdudEWuYlLbesH\nKAAxDxyZgwO7Y14chnDqquHb2kRsUTnHDKps8dsEfHyX24YOXge9EsGIEaKCN+d+\nKEg7FHcPY0y3X8XdQ96+U0cLK6ROpCYUo/LCqBlZrc/S00xMqwTz12sx7se9gc80\nO50VmRGQU57U4qAQnOasNSd1pGZwOeVROS+BQPq+MKu8wje5brvRb+isgfx0tKKl\nBAH5XiJBc4IjOwD/cSwk+qaoMIuleu1KFLJMBb0NhGSLAyZ+wBH94wNrRzyvt3GQ\n6XTIixH4W2jH/y4JL85LkU6fuKgWt6lf+NEFnOnzVFFj0r4JalPXXEmj4rzHmu7m\ntBon2rCHAgMBAAECggEAAWmnqMdypl1OrJq8HbRf8jQNNYF3V1QQ8Nkk+r4ivMGh\nfdnsMNudtZWT3BxYQAqxkQz49MoLpZTwmt2rf/P3+QhPqJjQAeJYvWWrjjsO1rF7\nsdWiGAI/b+ExqlbAKTOi8LguOp1D5ruh6nraNlZPpPZKxudcvalaG5LCTrhxPnIS\ntTkUUQOFoDjFN8nswQ6UCYErZb/BStau3d2VKwXhiYpp8R7sdWOAcNk1pkgx37QL\nth65d1e2h4Y2gO9OHLCZ6BlrmKAb93gurV0S57dnERakJwqxhogbjuT0SNxGqWSt\n8cJYOJ8Es7i2CzijqU+DemeXziM+2qwhvO3ybLpeEQKBgQDJ/JSBi3WD25QZIwDH\n7C1anKcLE80uQywwesrplzqdAXvKjCp7FmH+qL9VtKd7bJGWAXBs3xXadWjWTur2\nYFeB3PcKS9wafmgeL+obNJhNGfWmt9VY82ago1cz2ZQIZnVnmSvBHLOE7URwYLE0\n1DAhltMlb2/kZIuF576Dg8sBqQKBgQDH50Ve+4jlVZLJTq5ybSo5e8gJPl0gy+3A\n3NWla7Y/SZVhcS5cx37lzz8GKT7bD4P7MOa9w6VdebEhk9ZQZL+Gqifakx4ec4jU\nOyn42gdcbEMzJ8flH4pWprH1WU5DYE0DOIBQeEoSRm1PYQi6gseXB89DuQF1bKku\nF/SPzgTerwKBgQCZ8azJ0x18orUMN3ZX6TRj9DMIKU5fLQkX5e6S/BTLJx9PL2cN\nKvEDI1+4lZh0ZDnNh0lFYP2J46REeh9wKdtn+Z47NbgKZT87iq81ju9pDBkCuOed\nBN26HuPOe8zsXhKrI72KUDKuZBuePsOwjOwmHYrN5FH2U39XTloQaDkoCQKBgQCm\nks45cXwHLaFc4ZV3gAOZVs2+9hqAA64f8WSNrQ11+wjg44DwisPxFxq7NY9M1sbx\nfzQmmGqpU4gIJLqGzwzRV+RRvBly4m73+jzlQji0CPqOG+3zvK53ufu8KCiQ+CP0\nNRam9zUxuUHIzWCKmgNalIVfN0BB6sOmxwtg8RkZvQKBgQCCc8+jrtTZUrUUf6lx\n/+LxC0XpiAoSP/iXRUSJSRJCSm5eLNiCpkg/F/vfs6gxnPh4Kvlyx3aE1kI5sIc/\nEKpwCPWpuzmUZvLz/JXyn+Jc3OWs7BiSQ9V/HThcyt/LTRmsDm8xsRntHl17GBq+\n5Y2wkjssqOAVthJOWC6dSIf99A==\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-vnyyt@gamewiki-15b52.iam.gserviceaccount.com",
+  "client_id": "117348697413791898389",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-vnyyt%40gamewiki-15b52.iam.gserviceaccount.com"
+}
