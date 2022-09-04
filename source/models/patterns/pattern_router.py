@@ -10,13 +10,9 @@ from fastapi import HTTPException
 from config.backoffConf import backoff_cnf
 from config.circuitConf import circuit_conf
 from config.loggingConf import LogConfig
+# from source.models.auth.auth_controller import logger
+from source.models.auth.auth_controller import logger
 from utils.handlers import backoff_handlers, circuit_handlers
-
-dictConfig(LogConfig().dict())
-logger = logging.getLogger("gamewiki")
-logging.basicConfig(filename='test.log', filemode='w',
-                    encoding='utf-8', format=LogConfig().LOG_FORMAT,
-                    )
 
 patternRouter = APIRouter(
     tags=["Test patterns"],
@@ -55,9 +51,3 @@ async def retry_pattern():
         raise HTTPException(status_code=400, detail="Item not found")
     else:
         return {"detail": "Item found"}
-
-
-@patternRouter.get("/help")
-async def help():
-    return {"detail": "Send help"}
-

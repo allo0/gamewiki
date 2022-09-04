@@ -1,8 +1,8 @@
 fastapi==0.79.0
-fastapi_crudrouter==0.8.5
-fastapi_utils==0.2.1
+# fastapi_crudrouter==0.8.5
+# fastapi_utils==0.2.1
 passlib==1.7.4
-pydantic==1.9.0
+pydantic==1.9.1
 SQLAlchemy==1.4.32
 starlette==0.19.1
 uvicorn==0.18.2
@@ -11,11 +11,11 @@ uvloop
 circuitbreaker==1.4.0
 httptools
 aiofiles==0.8.0
-mysql-connector-python~=8.0.27
-mysql_connector_repackaged==0.3.1
-mysql~=0.0.3
+
 python-multipart==0.0.5
 authlib==1.0.1
 itsdangerous==2.1.2
-httpx==0.22.0
+httpx==0.23.0
 requests==2.28.1
+firebase-admin==5.2.0
+azure-storage-blob==12.9.0
