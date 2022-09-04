@@ -19,8 +19,8 @@ app = FastAPI(title=Settings.PROJECT_NAME, version=Settings.PROJECT_VERSION,
 
 app.include_router(patternRouter, prefix='/v1')
 app.include_router(googleRouter, prefix='/v1')
-app.include_router(steamRouter, prefix='/v1')
-app.include_router(storageRouter, prefix='/v1')
+app.include_router(steamRouter, prefix='/v1',dependencies=[Depends(get_user)])
+app.include_router(storageRouter, prefix='/v1',dependencies=[Depends(get_user)])
 
 
 
