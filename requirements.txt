@@ -19,3 +19,4 @@ httpx==0.23.0
 requests==2.28.1
 azure-storage-blob==12.13.1
 azure-core==1.25.1
+firebase-admin==5.2.0
