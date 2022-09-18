@@ -59,16 +59,18 @@ async def get_player_summaries(steam_id: str):
 
     async with aiohttp.ClientSession() as session:
         async with session.get(req_url) as resp:
+            print(resp.json)
             try:
+
                 obj = await resp.json()
 
                 logger.debug(obj)
-                if len(obj) is 0:
+                if len(obj) == 0:
                     return HTTPException(status_code=400, detail="Empty object")
-                return obj
+                return await obj
 
             except Exception as e:
-                return await resp.json()
+                return await resp.json(content_type=None)
 
 
 @steamRouter.get('/user_friendlist')
@@ -86,7 +88,7 @@ async def get_friend_list(steam_id: str, relationship: str):
             try:
                 obj = await resp.json()
 
-                if len(obj) is 0:
+                if len(obj) == 0:
                     return HTTPException(status_code=400, detail="Empty object")
 
                 # friend_list = GetFriendList()
@@ -113,7 +115,7 @@ async def get_player_achievements(steam_id: str, app_id: str = '440'):
         async with session.get(req_url) as resp:
             try:
                 obj = await resp.json()
-                if len(obj) is 0:
+                if len(obj) ==0:
                     return HTTPException(status_code=400, detail="Empty object")
                 # achievs = GetPlayerAchievements()
                 achievs = obj
@@ -139,7 +141,7 @@ async def get_user_stats_for_game(steam_id: str, app_id: str = '440'):
         async with session.get(req_url) as resp:
             try:
                 obj = await resp.json()
-                if len(obj) is 0:
+                if len(obj) == 0:
                     return HTTPException(status_code=400, detail="Empty object")
                 stats = obj
                 logger.debug(stats)
@@ -162,7 +164,7 @@ async def get_owned_games(steam_id: str):
         async with session.get(req_url) as resp:
             try:
                 obj = await resp.json()
-                if len(obj) is 0:
+                if len(obj) == 0:
                     return HTTPException(status_code=400, detail="Empty object")
                 games = obj
                 logger.debug(games)

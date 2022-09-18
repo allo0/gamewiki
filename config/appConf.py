@@ -1,3 +1,5 @@
+import os
+
 from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
 
@@ -18,11 +20,13 @@ class Settings:
     }
 
     # API_URL = "http://127.0.0.1:8000"
-    API_URL="https://hidden-inlet-35935.herokuapp.com/"
+    API_URL = "https://hidden-inlet-35935.herokuapp.com/"
 
-    STEAM_API_KEY = "7DC5A7A48F87A2A910FAB95D695D6B5B"
-    AZURE_CLOUD_STORAGE_KEY = "MDEopau5hYvqXaXZS+mBqr3fuMUJnW2ZQi3UcjloZliX6+/YNPKdrcztwiOvnherbtL4RkBcl3jP+AStUo9vxg=="
-    AZURE_CLOUD_STORAGE_CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=gamewikistorage;AccountKey=MDEopau5hYvqXaXZS+mBqr3fuMUJnW2ZQi3UcjloZliX6+/YNPKdrcztwiOvnherbtL4RkBcl3jP+AStUo9vxg==;EndpointSuffix=core.windows.net"
+    GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+    STEAM_API_KEY = os.getenv("STEAM_API_KEY")
+    AZURE_CLOUD_STORAGE_NAME = os.getenv("AZURE_CLOUD_STORAGE_NAME")
+    AZURE_CLOUD_STORAGE_KEY = os.getenv("AZURE_CLOUD_STORAGE_KEY")
+    AZURE_CLOUD_STORAGE_CONNECTION_STRING = os.getenv("AZURE_CLOUD_STORAGE_CONNECTION_STRING")
 
     origins = [
         "*",

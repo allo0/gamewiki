@@ -33,6 +33,6 @@ class GoogleEmailSignup(BaseModel):
 
 
 class GoogleEmailRequest(BaseModel):
-    email: str
-    password: str
+    email: str = "ias.topalidis@gmail.com"
+    password: str = "mao2mao"
     returnSecureToken: bool = True
