@@ -14,8 +14,6 @@ app = FastAPI(title=Settings.PROJECT_NAME, version=Settings.PROJECT_VERSION,
               middleware=Settings.middleware, swagger_ui_parameters=Settings.swagger_ui_parameters,
               swagger_ui_default_parameters=Settings.swagger_ui_default_parameters)
 
-# Static Content Hosting Pattern
-
 
 app.include_router(patternRouter, prefix='/v1')
 app.include_router(googleRouter, prefix='/v1')

@@ -31,7 +31,7 @@ class Settings:
     origins = [
         "*",
         "https://hidden-inlet-35935.herokuapp.com/",
-        "https://hidden-inlet-35935.herokuapp.com/",
+        "http://localhost:4200",
         "http://127.0.0.1:8000",
 
     ]
