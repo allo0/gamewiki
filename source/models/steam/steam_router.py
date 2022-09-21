@@ -1,6 +1,6 @@
 import aiohttp
 import backoff
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from fastapi import HTTPException
 from starlette.requests import Request
 
@@ -8,6 +8,7 @@ from config.appConf import Settings
 from config.backoffConf import backoff_cnf
 from source.models.auth.auth_controller import logger
 from source.models.auth.steamsignin import SteamSignIn
+from source.models.steam.steam_model import Welcome10
 from utils.handlers import backoff_handlers
 
 steamRouter = APIRouter(
@@ -109,13 +110,13 @@ async def get_friend_list(steam_id: str, relationship: str):
                       )
 async def get_player_achievements(steam_id: str, app_id: str = '440'):
     req_url = "http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?appid=" + app_id \
-             + "&key=" + Settings.STEAM_API_KEY + "&steamid=" + steam_id
+              + "&key=" + Settings.STEAM_API_KEY + "&steamid=" + steam_id
 
     async with aiohttp.ClientSession() as session:
         async with session.get(req_url) as resp:
             try:
                 obj = await resp.json()
-                if len(obj) ==0:
+                if len(obj) == 0:
                     return HTTPException(status_code=400, detail="Empty object")
                 # achievs = GetPlayerAchievements()
                 achievs = obj
@@ -135,7 +136,7 @@ async def get_player_achievements(steam_id: str, app_id: str = '440'):
                       )
 async def get_user_stats_for_game(steam_id: str, app_id: str = '440'):
     req_url = "http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=" + app_id \
-             + "&key=" + Settings.STEAM_API_KEY + "&steamid=" + steam_id
+              + "&key=" + Settings.STEAM_API_KEY + "&steamid=" + steam_id
 
     async with aiohttp.ClientSession() as session:
         async with session.get(req_url) as resp:
@@ -159,7 +160,7 @@ async def get_user_stats_for_game(steam_id: str, app_id: str = '440'):
                       logger=logger
                       )
 async def get_owned_games(steam_id: str):
-    req_url = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?&key=" + Settings.STEAM_API_KEY + "&steamid=" + steam_id + "&format=json "
+    req_url = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?&key=" + Settings.STEAM_API_KEY + "&steamid=" + steam_id + "&format=json"
     async with aiohttp.ClientSession() as session:
         async with session.get(req_url) as resp:
             try:
@@ -172,3 +173,25 @@ async def get_owned_games(steam_id: str):
 
             except Exception as e:
                 return await resp.json()
+
+
+@steamRouter.get('/game_achievements')
+@backoff.on_exception(backoff.expo,
+                      HTTPException,
+                      max_tries=backoff_cnf.MAX_RETRIES,
+                      on_backoff=backoff_handlers.backoff_hdlr,
+                      logger=logger
+                      )
+async def get_game_achievements(steam_id: str, app_id: str = '440'):
+    req_url = "https://steamcommunity.com/profiles/" + steam_id + "/stats/" + app_id + "/achievements/?xml=1"
+    async with aiohttp.ClientSession() as session:
+        async with session.get(req_url) as resp:
+            try:
+
+                logger.debug(resp)
+                body = await resp.text()
+
+                return Response(content=body, media_type="application/xml")
+
+            except Exception as e:
+                return e

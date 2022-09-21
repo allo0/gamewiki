@@ -22,7 +22,8 @@ app.include_router(storageRouter, prefix='/v1',dependencies=[Depends(get_user)])
 
 
 
-# Domain Name: https://hidden-inlet-35935.herokuapp.com/
+# https://steamcommunity.com/profiles/76561198060726351/stats/105600/achievements/?xml=1
+#  TODO check design patterns with front
 
 @app.get("/api/me")
 async def hello_user(user=Depends(get_user)):
