@@ -62,29 +62,33 @@ async def signup(info: GoogleEmailRequest):
                       logger=logger
                       )
 async def login(info: GoogleEmailRequest):
-    reqUrl = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key="+Settings.GOOGLE_API_KEY
+    number = random.randint(0, 10)
+    if number % 2 == 0:
+        raise HTTPException(status_code=418, detail="TEAPOT")
+    else:
+        reqUrl = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key="+Settings.GOOGLE_API_KEY
 
-    headersList = {
-        "Accept": "*/*",
-        "Content-Type": "application/json"
-    }
+        headersList = {
+            "Accept": "*/*",
+            "Content-Type": "application/json"
+        }
 
-    payload = json.dumps({
-        "email": info.email,
-        "password": info.password,
-        "returnSecureToken": info.returnSecureToken
-    })
+        payload = json.dumps({
+            "email": info.email,
+            "password": info.password,
+            "returnSecureToken": info.returnSecureToken
+        })
 
-    async with aiohttp.ClientSession() as session:
-        async with session.post(reqUrl, data=payload, headers=headersList) as resp:
-            try:
-                obj = await resp.json()
-                logger.debug(obj)
+        async with aiohttp.ClientSession() as session:
+            async with session.post(reqUrl, data=payload, headers=headersList) as resp:
+                try:
+                    obj = await resp.json()
+                    logger.debug(obj)
 
-                return GoogleEmailSignin(kind=obj["kind"], localId=obj["localId"],
-                                         displayName=obj["displayName"], registered=obj["registered"],
-                                         refreshToken=obj["refreshToken"], expiresIn=obj["expiresIn"],
-                                         idToken=obj["idToken"], email=obj["email"])
+                    return GoogleEmailSignin(kind=obj["kind"], localId=obj["localId"],
+                                             displayName=obj["displayName"], registered=obj["registered"],
+                                             refreshToken=obj["refreshToken"], expiresIn=obj["expiresIn"],
+                                             idToken=obj["idToken"], email=obj["email"])
 
-            except Exception as e:
-                return await resp.json()
+                except Exception as e:
+                    return await resp.json()
