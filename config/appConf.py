@@ -2,6 +2,7 @@ import os
 
 from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 
 
 class Settings:
@@ -37,6 +38,7 @@ class Settings:
     ]
     middleware = [
         Middleware(
+            HTTPSRedirectMiddleware,
             CORSMiddleware,
             allow_origins=origins,
             allow_credentials=True,

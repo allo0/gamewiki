@@ -30,6 +30,7 @@ storageRouter = APIRouter(
                       on_backoff=backoff_handlers.backoff_hdlr,
                       logger=logger
                       )
+# TODO FIX UNAUTHORIZED (?)
 async def upload_image(image_base64: str, user=Depends(get_user)):
     account_name = Settings.AZURE_CLOUD_STORAGE_NAME
     account_key = Settings.AZURE_CLOUD_STORAGE_KEY
@@ -40,7 +41,7 @@ async def upload_image(image_base64: str, user=Depends(get_user)):
     container_name = user['uid'].lower()
 
     if blob_service_client.get_container_client(container_name):
-        container_client=blob_service_client.get_container_client(container_name)
+        container_client = blob_service_client.get_container_client(container_name)
     else:
         # Create the container
         container_client = blob_service_client.create_container(container_name)
@@ -92,7 +93,7 @@ async def upload_image(image_base64: str, user=Depends(get_user)):
                       on_backoff=backoff_handlers.backoff_hdlr,
                       logger=logger
                       )
-async def list_images( user=Depends(get_user)):
+async def list_images(user=Depends(get_user)):
     account_name = Settings.AZURE_CLOUD_STORAGE_NAME
     account_key = Settings.AZURE_CLOUD_STORAGE_KEY
 
@@ -102,16 +103,14 @@ async def list_images( user=Depends(get_user)):
     container_name = user['uid'].lower()
 
     if blob_service_client.get_container_client(container_name):
-        container_client=blob_service_client.get_container_client(container_name)
+        container_client = blob_service_client.get_container_client(container_name)
     else:
         # Create the container
         container_client = blob_service_client.create_container(container_name)
 
-    url_list=[]
+    url_list = []
     blob_list = container_client.list_blobs()
     for blob_name in blob_list:
-
-
         url = f"https://{account_name}.blob.core.windows.net/{container_name}/{blob_name.name}"
         sas_token = generate_blob_sas(
             account_name=account_name,
@@ -125,6 +124,5 @@ async def list_images( user=Depends(get_user)):
         url_with_sas = f"{url}?{sas_token}"
         logger.debug(url_with_sas)
         url_list.append(url_with_sas)
-
 
     return {"detail": url_list}
