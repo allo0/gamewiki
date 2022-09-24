@@ -1,15 +1,18 @@
+import random
+
 import aiohttp
 import backoff
 from fastapi import APIRouter, Depends, Response
 from fastapi import HTTPException
 from starlette.requests import Request
-
+from circuitbreaker import circuit
 from config.appConf import Settings
 from config.backoffConf import backoff_cnf
+from config.circuitConf import circuit_conf
 from source.models.auth.auth_controller import logger
 from source.models.auth.steamsignin import SteamSignIn
 from source.models.steam.steam_model import Welcome10
-from utils.handlers import backoff_handlers
+from utils.handlers import backoff_handlers, circuit_handlers
 
 steamRouter = APIRouter(
     tags=["Steam APIs functionality"
@@ -176,22 +179,27 @@ async def get_owned_games(steam_id: str):
 
 
 @steamRouter.get('/game_achievements')
-@backoff.on_exception(backoff.expo,
-                      HTTPException,
-                      max_tries=backoff_cnf.MAX_RETRIES,
-                      on_backoff=backoff_handlers.backoff_hdlr,
-                      logger=logger
-                      )
+@circuit(failure_threshold=circuit_conf.FAILURE_THRESHOLD,
+         recovery_timeout=circuit_conf.RECOVERY_TIMEOUT,
+         expected_exception=circuit_handlers.exception_condition,
+         fallback_function=circuit_handlers.fallback_response
+         )
 async def get_game_achievements(steam_id: str, app_id: str = '440'):
-    req_url = "https://steamcommunity.com/profiles/" + steam_id + "/stats/" + app_id + "/achievements/?xml=1"
-    async with aiohttp.ClientSession() as session:
-        async with session.get(req_url) as resp:
-            try:
+    number = random.randint(0, 10)
+    logger.debug(circuit_handlers.circuit_hdlr())
 
-                logger.debug(resp)
-                body = await resp.text()
+    if number % 2 == 0:
+        raise HTTPException(status_code=418, detail="TSAGIERA")
+    else:
+        req_url = "https://steamcommunity.com/profiles/" + steam_id + "/stats/" + app_id + "/achievements/?xml=1"
+        async with aiohttp.ClientSession() as session:
+            async with session.get(req_url) as resp:
+                try:
 
-                return Response(content=body, media_type="application/xml")
+                    logger.debug(resp)
+                    body = await resp.text()
 
-            except Exception as e:
-                return e
+                    return Response(content=body, media_type="application/xml")
+
+                except Exception as e:
+                    return e
