@@ -16,7 +16,7 @@ from config.loggingConf import LogConfig
 
 from source.models.auth.auth_controller import logger, get_user
 from config.appConf import Settings
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 
 storageRouter = APIRouter(
     tags=["Azure Storage functionality"
@@ -31,9 +31,13 @@ storageRouter = APIRouter(
                       logger=logger
                       )
 # TODO FIX UNAUTHORIZED (?)
-async def upload_image(image_base64: str, user=Depends(get_user)):
+async def upload_image(image_base64: str, request: Request, user=Depends(get_user)):
     account_name = Settings.AZURE_CLOUD_STORAGE_NAME
     account_key = Settings.AZURE_CLOUD_STORAGE_KEY
+
+    logger.debug(request.headers)
+    logger.debug(request.body())
+    logger.debug(request.client)
 
     # Create the BlobServiceClient object which will be used to create a container client
     blob_service_client = BlobServiceClient.from_connection_string(Settings.AZURE_CLOUD_STORAGE_CONNECTION_STRING)
