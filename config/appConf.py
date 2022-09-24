@@ -38,7 +38,6 @@ class Settings:
     ]
     middleware = [
         Middleware(
-            HTTPSRedirectMiddleware,
             CORSMiddleware,
             allow_origins=origins,
             allow_credentials=True,
