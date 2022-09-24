@@ -24,13 +24,12 @@ storageRouter = APIRouter(
 
 
 @storageRouter.post("/image")
-# @backoff.on_exception(backoff.expo,
-#                       HTTPException,
-#                       max_tries=backoff_cnf.MAX_RETRIES,
-#                       on_backoff=backoff_handlers.backoff_hdlr,
-#                       logger=logger
-#                       )
-# TODO FIX UNAUTHORIZED (?)
+@backoff.on_exception(backoff.expo,
+                      HTTPException,
+                      max_tries=backoff_cnf.MAX_RETRIES,
+                      on_backoff=backoff_handlers.backoff_hdlr,
+                      logger=logger
+                      )
 async def upload_image(image_base64: str, request: Request, user=Depends(get_user)):
     account_name = Settings.AZURE_CLOUD_STORAGE_NAME
     account_key = Settings.AZURE_CLOUD_STORAGE_KEY
