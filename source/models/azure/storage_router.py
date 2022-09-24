@@ -24,19 +24,20 @@ storageRouter = APIRouter(
 
 
 @storageRouter.post("/image")
-@backoff.on_exception(backoff.expo,
-                      HTTPException,
-                      max_tries=backoff_cnf.MAX_RETRIES,
-                      on_backoff=backoff_handlers.backoff_hdlr,
-                      logger=logger
-                      )
+# @backoff.on_exception(backoff.expo,
+#                       HTTPException,
+#                       max_tries=backoff_cnf.MAX_RETRIES,
+#                       on_backoff=backoff_handlers.backoff_hdlr,
+#                       logger=logger
+#                       )
 # TODO FIX UNAUTHORIZED (?)
 async def upload_image(image_base64: str, request: Request, user=Depends(get_user)):
     account_name = Settings.AZURE_CLOUD_STORAGE_NAME
     account_key = Settings.AZURE_CLOUD_STORAGE_KEY
-    print(request.headers)
-    print(request.body())
-    print(request.client)
+
+    logger.debug(request.headers)
+    logger.debug(request.body())
+    logger.debug(request.client)
 
     # Create the BlobServiceClient object which will be used to create a container client
     blob_service_client = BlobServiceClient.from_connection_string(Settings.AZURE_CLOUD_STORAGE_CONNECTION_STRING)
