@@ -25,12 +25,12 @@ storageRouter = APIRouter(
 
 
 @storageRouter.post("/image")
-# @circuit(failure_threshold=circuit_conf.FAILURE_THRESHOLD,
-#          recovery_timeout=circuit_conf.RECOVERY_TIMEOUT,
-#          expected_exception=circuit_handlers.exception_condition,
-#          fallback_function=circuit_handlers.fallback_response
-#          )
-async def upload_image(image_base64: str, request: Request, user=Depends(get_user)):
+@circuit(failure_threshold=circuit_conf.FAILURE_THRESHOLD,
+         recovery_timeout=circuit_conf.RECOVERY_TIMEOUT,
+         expected_exception=circuit_handlers.exception_condition,
+         fallback_function=circuit_handlers.fallback_response
+         )
+def upload_image(image_base64: str, request: Request, user=Depends(get_user)):
     number = random.randint(0, 10)
     logger.debug(circuit_handlers.circuit_hdlr())
 
