@@ -17,7 +17,7 @@ from config.loggingConf import LogConfig
 
 from source.models.auth.auth_controller import logger, get_user
 from config.appConf import Settings
-from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi import APIRouter, HTTPException, Depends, Request, File, UploadFile
 
 storageRouter = APIRouter(
     tags=["Azure Storage functionality"
@@ -30,7 +30,7 @@ storageRouter = APIRouter(
          expected_exception=circuit_handlers.exception_condition,
          fallback_function=circuit_handlers.fallback_response
          )
-def upload_image(image_base64: str, request: Request, user=Depends(get_user)):
+def upload_image(request: Request, file: UploadFile = File(...), user=Depends(get_user)):
     number = random.randint(0, 10)
     logger.debug(circuit_handlers.circuit_hdlr())
 
@@ -64,14 +64,22 @@ def upload_image(image_base64: str, request: Request, user=Depends(get_user)):
         upload_file_path = os.path.join(local_path, local_file_name)
         logger.debug(upload_file_path)
 
-        with open(upload_file_path, "wb") as fh:
-            fh.write(base64.decodebytes(str.encode(image_base64)))
+        # with open(upload_file_path, "wb") as fh:
+        #     fh.write(base64.decodebytes(str.encode(image_base64)))
+        try:
+            with open(file.filename, 'wb') as f:
+                while contents := file.file.read(1024 * 1024):
+                    f.write(contents)
+        except Exception:
+            return {"message": "There was an error uploading the file"}
+        finally:
+            file.file.close()
 
         # Create a blob client using the local file name as the name for the blob
         blob_client = blob_service_client.get_blob_client(container=container_name, blob=local_file_name)
 
         # Upload the created file
-        with open(upload_file_path, "rb") as data:
+        with open(file.filename, "rb") as data:
             blob_client.upload_blob(data)
 
         shutil.rmtree(local_path, ignore_errors=True)

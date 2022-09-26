@@ -21,11 +21,6 @@ app.include_router(googleRouter, prefix='/v1')
 app.include_router(steamRouter, prefix='/v1',dependencies=[Depends(get_user)])
 app.include_router(storageRouter, prefix='/v1')
 
-
-
-# https://steamcommunity.com/profiles/76561198060726351/stats/105600/achievements/?xml=1
-#  TODO check design patterns with front
-
 @app.get("/api/me")
 async def hello_user(user=Depends(get_user)):
     return {"msg": "Hello, {}".format(user['email']), "uid": user['uid']}
