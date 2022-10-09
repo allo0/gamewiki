@@ -37,14 +37,10 @@ def upload_image(request: Request, image_base64: Image, user=Depends(get_user)):
     logger.debug(circuit_handlers.circuit_hdlr())
 
     if number % 2 == 0:
-        raise HTTPException(status_code=418, detail="TSAGIERA")
+        raise HTTPException(status_code=400, detail="TSAGIERA")
     else:
         account_name = Settings.AZURE_CLOUD_STORAGE_NAME
         account_key = Settings.AZURE_CLOUD_STORAGE_KEY
-
-        # logger.debug(request.headers)
-        # logger.debug(request.body())
-        # logger.debug(request.client)
 
         # Create the BlobServiceClient object which will be used to create a container client
         blob_service_client = BlobServiceClient.from_connection_string(Settings.AZURE_CLOUD_STORAGE_CONNECTION_STRING)
@@ -68,24 +64,13 @@ def upload_image(request: Request, image_base64: Image, user=Depends(get_user)):
 
         with open(upload_file_path, "wb") as fh:
             fh.write(base64.decodebytes(str.encode(image_base64.image)))
-        # try:
-        #     with open(file.filename, 'wb') as f:
-        #         while contents := file.file.read(1024 * 1024):
-        #             f.write(contents)
-        # except Exception:
-        #     return {"message": "There was an error uploading the file"}
-        # finally:
-        #     file.file.close()
 
         # Create a blob client using the local file name as the name for the blob
         blob_client = blob_service_client.get_blob_client(container=container_name, blob=local_file_name)
 
         # Upload the created file
-        # with open(file.filename, "rb") as data:
-        #     blob_client.upload_blob(data)
         with open(upload_file_path, "rb") as data:
             blob_client.upload_blob(data)
-
 
         shutil.rmtree(local_path, ignore_errors=True)
 
@@ -109,8 +94,8 @@ def upload_image(request: Request, image_base64: Image, user=Depends(get_user)):
 
 
 @storageRouter.get("/image")
-@backoff.on_exception(backoff.expo,
-                      HTTPException,
+@backoff.on_exception(wait_gen=backoff.expo,
+                      exception=HTTPException,
                       max_tries=backoff_cnf.MAX_RETRIES,
                       on_backoff=backoff_handlers.backoff_hdlr,
                       logger=logger
