@@ -8,7 +8,6 @@ from config.appConf import Settings
 from config.backoffConf import backoff_cnf
 from source.models.auth.auth_controller import logger
 from source.models.auth.steamsignin import SteamSignIn
-from source.models.steam.steam_model import Welcome10
 from utils.handlers import backoff_handlers
 
 steamRouter = APIRouter(
@@ -195,3 +194,45 @@ async def get_game_achievements(steam_id: str, app_id: str = '440'):
 
             except Exception as e:
                 return e
+
+
+# @steamRouter.get("/recommendations")
+async def get_recommendations():
+    req_url = "https://api.steampowered.com/ISteamApps/GetAppList/v0002"
+    appid_list = []
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(req_url) as resp:
+            try:
+
+                obj = await resp.json()
+                if len(obj) == 0:
+                    return HTTPException(status_code=400, detail="Empty object")
+                games = obj
+                for app in games["applist"]["apps"]:
+                    appid_list.append(app['appid'])
+                # print(appid_list)
+                # return 0
+
+            except Exception as e:
+                return await resp.json()
+    apps = []
+    for appid in appid_list:
+        req_url = "https://store.steampowered.com/api/appdetails?appids=" + str(appid)
+        async with aiohttp.ClientSession() as session:
+            async with session.get(req_url) as resp:
+                try:
+
+                    obj = await resp.json()
+                    if len(obj) == 0:
+                        return HTTPException(status_code=400, detail="Empty object")
+                    games = obj
+                    print(games)
+                    exit(1)
+                    apps.append(games)
+                    # return 0
+
+                except Exception as e:
+                    return await resp.json()
+
+    print(apps)

@@ -33,84 +33,67 @@ storageRouter = APIRouter(
          fallback_function=circuit_handlers.fallback_response
          )
 def upload_image(request: Request, image_base64: Image, user=Depends(get_user)):
-    number = random.randint(0, 10)
+
     logger.debug(circuit_handlers.circuit_hdlr())
 
-    if number % 2 == 0:
-        raise HTTPException(status_code=418, detail="TSAGIERA")
+
+    account_name = Settings.AZURE_CLOUD_STORAGE_NAME
+    account_key = Settings.AZURE_CLOUD_STORAGE_KEY
+
+    # Create the BlobServiceClient object which will be used to create a container client
+    blob_service_client = BlobServiceClient.from_connection_string(Settings.AZURE_CLOUD_STORAGE_CONNECTION_STRING)
+    # Create a unique name for the container
+    container_name = user['uid'].lower()
+
+    if blob_service_client.get_container_client(container_name):
+        container_client = blob_service_client.get_container_client(container_name)
     else:
-        account_name = Settings.AZURE_CLOUD_STORAGE_NAME
-        account_key = Settings.AZURE_CLOUD_STORAGE_KEY
+        # Create the container
+        container_client = blob_service_client.create_container(container_name)
 
-        # logger.debug(request.headers)
-        # logger.debug(request.body())
-        # logger.debug(request.client)
+    # Create a local directory to hold blob data
+    local_path = os.path.dirname(Path(__file__).parent) + '/files'
+    os.mkdir(local_path)
 
-        # Create the BlobServiceClient object which will be used to create a container client
-        blob_service_client = BlobServiceClient.from_connection_string(Settings.AZURE_CLOUD_STORAGE_CONNECTION_STRING)
-        # Create a unique name for the container
-        container_name = user['uid'].lower()
+    # Create a file in the local data directory to upload and download
+    local_file_name = str(uuid.uuid4()) + ".jpg"
+    upload_file_path = os.path.join(local_path, local_file_name)
+    logger.debug(upload_file_path)
 
-        if blob_service_client.get_container_client(container_name):
-            container_client = blob_service_client.get_container_client(container_name)
-        else:
-            # Create the container
-            container_client = blob_service_client.create_container(container_name)
+    with open(upload_file_path, "wb") as fh:
+        fh.write(base64.decodebytes(str.encode(image_base64.image)))
 
-        # Create a local directory to hold blob data
-        local_path = os.path.dirname(Path(__file__).parent) + '/files'
-        os.mkdir(local_path)
+    # Create a blob client using the local file name as the name for the blob
+    blob_client = blob_service_client.get_blob_client(container=container_name, blob=local_file_name)
 
-        # Create a file in the local data directory to upload and download
-        local_file_name = str(uuid.uuid4()) + ".jpg"
-        upload_file_path = os.path.join(local_path, local_file_name)
-        logger.debug(upload_file_path)
+    # Upload the created file
+    with open(upload_file_path, "rb") as data:
+        blob_client.upload_blob(data)
 
-        with open(upload_file_path, "wb") as fh:
-            fh.write(base64.decodebytes(str.encode(image_base64.image)))
-        # try:
-        #     with open(file.filename, 'wb') as f:
-        #         while contents := file.file.read(1024 * 1024):
-        #             f.write(contents)
-        # except Exception:
-        #     return {"message": "There was an error uploading the file"}
-        # finally:
-        #     file.file.close()
+    shutil.rmtree(local_path, ignore_errors=True)
 
-        # Create a blob client using the local file name as the name for the blob
-        blob_client = blob_service_client.get_blob_client(container=container_name, blob=local_file_name)
+    blob_name = local_file_name
+    logger.debug(blob_name)
 
-        # Upload the created file
-        # with open(file.filename, "rb") as data:
-        #     blob_client.upload_blob(data)
-        with open(upload_file_path, "rb") as data:
-            blob_client.upload_blob(data)
+    url = f"https://{account_name}.blob.core.windows.net/{container_name}/{blob_name}"
+    sas_token = generate_blob_sas(
+        account_name=account_name,
+        account_key=account_key,
+        container_name=container_name,
+        blob_name=blob_name,
+        permission=AccountSasPermissions(read=True),
+        expiry=datetime.utcnow() + timedelta(hours=1)
+    )
 
+    url_with_sas = f"{url}?{sas_token}"
+    logger.debug(url_with_sas)
 
-        shutil.rmtree(local_path, ignore_errors=True)
-
-        blob_name = local_file_name
-        logger.debug(blob_name)
-
-        url = f"https://{account_name}.blob.core.windows.net/{container_name}/{blob_name}"
-        sas_token = generate_blob_sas(
-            account_name=account_name,
-            account_key=account_key,
-            container_name=container_name,
-            blob_name=blob_name,
-            permission=AccountSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1)
-        )
-
-        url_with_sas = f"{url}?{sas_token}"
-        logger.debug(url_with_sas)
-
-        return {"detail": url_with_sas}
+    return {"detail": url_with_sas}
 
 
 @storageRouter.get("/image")
-@backoff.on_exception(backoff.expo,
-                      HTTPException,
+@backoff.on_exception(wait_gen=backoff.expo,
+                      exception=HTTPException,
                       max_tries=backoff_cnf.MAX_RETRIES,
                       on_backoff=backoff_handlers.backoff_hdlr,
                       logger=logger
