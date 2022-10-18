@@ -6,7 +6,6 @@ passlib==1.7.4
 pydantic==1.9.1
 SQLAlchemy==1.4.32
 starlette==0.20.4
-uvicorn==0.18.2
 backoff==2.1.2
 uvloop
 circuitbreaker==1.4.0
